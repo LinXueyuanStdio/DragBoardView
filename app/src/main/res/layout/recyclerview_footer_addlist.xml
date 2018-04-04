@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_rectangle_with_radius"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/add_sub_plan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="40dp"
+                android:src="@drawable/ic_action_add"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="添加列表"
+                android:textColor="@color/white"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/edit_sub_plan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/add_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="列表名称"
+                android:inputType="text"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/add_cancel"
+                android:layout_width="72dp"
+                android:layout_height="32dp"
+                android:layout_below="@+id/add_et"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toStartOf="@+id/add_ok"
+                android:background="@color/transparent"
+                android:text="取消"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/add_ok"
+                android:layout_width="72dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/add_et"
+                android:layout_marginTop="10dp"
+                android:text="创建"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14dp"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
