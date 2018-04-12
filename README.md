@@ -9,7 +9,8 @@
 
 |  |  |  |
 |:---:|:---:|:---:|
-|![截图1](/art/device-2018-04-04-085942.png)|![截图2](/art/device-2018-04-04-090017.png)|![截图3](/art/device-2018-04-04-090030.png)|
+|![截图1](/art/device-2018-04-04-085942.png)[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FLinXueyuanStdio%2FDragBoardView.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FLinXueyuanStdio%2FDragBoardView?ref=badge_shield)
+|![截图2](/art/device-2018-04-04-090017.png)|![截图3](/art/device-2018-04-04-090030.png)|
 |![截图4](/art/device-2018-04-04-090047.png)|![截图5](/art/device-2018-04-04-090115.png)|
 
 ### how to use
@@ -87,3 +88,7 @@ demo is more clear
 
 ### demo apk
 [download](art/app-debug.apk)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FLinXueyuanStdio%2FDragBoardView.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FLinXueyuanStdio%2FDragBoardView?ref=badge_large)
