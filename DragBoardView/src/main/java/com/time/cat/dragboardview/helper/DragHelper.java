@@ -19,8 +19,8 @@ import android.widget.ImageView;
 import com.time.cat.dragboardview.DragLayout;
 import com.time.cat.dragboardview.PagerRecyclerView;
 import com.time.cat.dragboardview.callback.DragHorizontalAdapterCallBack;
-import com.time.cat.dragboardview.callback.DragVerticalAdapterCallBack;
 import com.time.cat.dragboardview.callback.DragHorizontalViewHolderCallBack;
+import com.time.cat.dragboardview.callback.DragVerticalAdapterCallBack;
 import com.time.cat.dragboardview.utils.AttrAboutPhone;
 
 import java.util.Timer;
@@ -43,7 +43,11 @@ public class DragHelper {
     private RecyclerView mCurrentVerticalRecycleView;
     private PagerRecyclerView mHorizontalRecyclerView;
 
+    private Object tag;
     private boolean isDraggingItem = false;//抓起=true，否则=false
+    private Object columnObject;
+    private boolean isDraggingColumn = false;//是否正在拖拽一列，抓起=true，否则=false
+
     private float mBornLocationX, mBornLocationY;//抓起时 view 的坐标
     private int offsetX, offsetY;//抓起时 view 坐标和点击点的距离
     private boolean confirmOffset = false;//是否确定了 offset
@@ -63,10 +67,6 @@ public class DragHelper {
     private int downScrollBounce;// 拖动的时候，开始向下滚动的边界
     private int mPosition = -1;// 拖动的 View 在纵向 recyclerView 上的 position
     private int mPagerPosition = -1;// 拖动的 View 在横向 recyclerView 上的 position
-
-    private boolean isDraggingColumn = false;//是否正在拖拽一列，抓起=true，否则=false
-
-    private Object tag;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -102,13 +102,7 @@ public class DragHelper {
     }
 
 
-
-
-
-
-
-
-    private Object columnObject;
+    //<drag column>
     /**
      * 是否在拖动一列
      */
@@ -116,6 +110,12 @@ public class DragHelper {
         return isDraggingColumn;
     }
 
+    /**
+     * 抓起
+     *
+     * @param columnView  抓起的 View
+     * @param position 抓起的 View 在 横向RecyclerView 的 position
+     */
     public void dragCol(View columnView, int position) {
         columnView.destroyDrawingCache();
         columnView.setDrawingCacheEnabled(true);
@@ -176,15 +176,6 @@ public class DragHelper {
     }
 
     /**
-     * 获取当前纵向 RecyclerView 的 Adapter
-     *
-     * @return Adapter
-     */
-    private DragHorizontalAdapterCallBack getHorizontalAdapter() {
-        return (DragHorizontalAdapterCallBack) mHorizontalRecyclerView.getAdapter();
-    }
-
-    /**
      * 更新当前拖动点下面的 RecyclerView
      */
     private void updateSlidingHorizontalRecyclerView(float x, float y) {
@@ -200,6 +191,7 @@ public class DragHelper {
             }
         }
     }
+
     /**
      * 获取当前拖动项的 position
      *
@@ -213,7 +205,7 @@ public class DragHelper {
         float y = rowY - location[1];
         View child = mHorizontalRecyclerView.findChildViewUnder(x, y);// 这个方法传入的值是相对于 recyclerView 的
         int newPosition = mHorizontalRecyclerView.getChildAdapterPosition(child);
-        int footerChildIndex = mHorizontalRecyclerView.getChildCount()+1;//把抓住的加回去
+        int footerChildIndex = mHorizontalRecyclerView.getChildCount() + 1;//把抓住的加回去
         if (newPosition != RecyclerView.NO_POSITION
                 && newPosition != footerChildIndex) {
             getHorizontalAdapter().updateDragItemVisibility(mPosition);
@@ -223,11 +215,15 @@ public class DragHelper {
         }
     }
 
-
-
-
-
-
+    /**
+     * 获取当前纵向 RecyclerView 的 Adapter
+     *
+     * @return Adapter
+     */
+    private DragHorizontalAdapterCallBack getHorizontalAdapter() {
+        return (DragHorizontalAdapterCallBack) mHorizontalRecyclerView.getAdapter();
+    }
+    //</drag column>
 
 
     /**
@@ -243,6 +239,7 @@ public class DragHelper {
         }
     }
 
+    //<drag item>
     /**
      * 是否在拖动一项
      */
@@ -315,6 +312,57 @@ public class DragHelper {
         }
     }
 
+    /**
+     * 更新当前拖动点下面的 RecyclerView
+     */
+    private void updateSlidingVerticalRecyclerView(float x, float y) {
+        int newPage = getHorizontalCurrentPosition(x, y); // 传入的是相对屏幕的 x,y
+        if (mPagerPosition != newPage) {
+            RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) mHorizontalRecyclerView.findViewHolderForAdapterPosition(newPage);
+            if (holder != null && holder.itemView != null && holder.getItemViewType() == TYPE_CONTENT) {
+                getCurrentVerticalAdapter().onDragOut();
+
+                mCurrentVerticalRecycleView = ((DragHorizontalViewHolderCallBack) holder).getRecyclerView();
+                mPagerPosition = newPage;
+
+                getCurrentVerticalAdapter().onDragIn(mPosition, tag);
+            }
+        }
+    }
+
+    /**
+     * 获取当前拖动项的 position
+     *
+     * @param rowX 拖动点相对于屏幕的横坐标
+     * @param rowY 拖动点相对于屏幕的纵坐标
+     */
+    private void findViewPositionInCurVerticalRV(float rowX, float rowY) {
+        int[] location = new int[2];
+        mCurrentVerticalRecycleView.getLocationOnScreen(location);
+        float x = rowX - location[0];
+        float y = rowY - location[1];
+        View child = mCurrentVerticalRecycleView.findChildViewUnder(x, y);// 这个方法传入的值是相对于 recyclerView 的
+        int newPosition = mCurrentVerticalRecycleView.getChildAdapterPosition(child);
+        if (newPosition != RecyclerView.NO_POSITION) {
+            getCurrentVerticalAdapter().updateDragItemVisibility(mPosition);
+            if (mPosition != newPosition) {
+                mPosition = newPosition;
+            }
+        }
+    }
+
+    /**
+     * 获取当前纵向 RecyclerView 的 Adapter
+     *
+     * @return Adapter
+     */
+    private DragVerticalAdapterCallBack getCurrentVerticalAdapter() {
+        return (DragVerticalAdapterCallBack) mCurrentVerticalRecycleView.getAdapter();
+    }
+    //</drag item>
+
+
+    //<common>
     /**
      * 更新拖动点的坐标
      *
@@ -456,54 +504,6 @@ public class DragHelper {
         }
     }
 
-    /**
-     * 更新当前拖动点下面的 RecyclerView
-     */
-    private void updateSlidingVerticalRecyclerView(float x, float y) {
-        int newPage = getHorizontalCurrentPosition(x, y); // 传入的是相对屏幕的 x,y
-        if (mPagerPosition != newPage) {
-            RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) mHorizontalRecyclerView.findViewHolderForAdapterPosition(newPage);
-            if (holder != null && holder.itemView != null && holder.getItemViewType() == TYPE_CONTENT) {
-                getCurrentVerticalAdapter().onDragOut();
-
-                mCurrentVerticalRecycleView = ((DragHorizontalViewHolderCallBack) holder).getRecyclerView();
-                mPagerPosition = newPage;
-
-                getCurrentVerticalAdapter().onDragIn(mPosition, tag);
-            }
-        }
-    }
-
-    /**
-     * 获取当前拖动项的 position
-     *
-     * @param rowX 拖动点相对于屏幕的横坐标
-     * @param rowY 拖动点相对于屏幕的纵坐标
-     */
-    private void findViewPositionInCurVerticalRV(float rowX, float rowY) {
-        int[] location = new int[2];
-        mCurrentVerticalRecycleView.getLocationOnScreen(location);
-        float x = rowX - location[0];
-        float y = rowY - location[1];
-        View child = mCurrentVerticalRecycleView.findChildViewUnder(x, y);// 这个方法传入的值是相对于 recyclerView 的
-        int newPosition = mCurrentVerticalRecycleView.getChildAdapterPosition(child);
-        if (newPosition != RecyclerView.NO_POSITION) {
-            getCurrentVerticalAdapter().updateDragItemVisibility(mPosition);
-            if (mPosition != newPosition) {
-                mPosition = newPosition;
-            }
-        }
-    }
-
-    /**
-     * 获取当前纵向 RecyclerView 的 Adapter
-     *
-     * @return Adapter
-     */
-    private DragVerticalAdapterCallBack getCurrentVerticalAdapter() {
-        return (DragVerticalAdapterCallBack) mCurrentVerticalRecycleView.getAdapter();
-    }
-
 
     private int getHorizontalCurrentPosition(float rowX, float rowY) {
         int[] location = new int[2];
@@ -516,4 +516,5 @@ public class DragHelper {
         }
         return mPagerPosition;
     }
+    //</common>
 }
