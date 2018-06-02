@@ -59,7 +59,7 @@ public class RecyclerViewVerticalDataAdapter extends RecyclerView.Adapter<Recycl
             @Override
             public boolean onLongClick(View v) {
                 v.setTag(item);
-                ((DragActivityCallBack)mContext).getDragHelper().drag(v, position);
+                ((DragActivityCallBack) mContext).getDragHelper().drag(v, position);
                 return true;
             }
         });
@@ -68,8 +68,8 @@ public class RecyclerViewVerticalDataAdapter extends RecyclerView.Adapter<Recycl
             @Override
             public void onClick(View v) {
                 //do something
-                Toast.makeText(mContext, "go to Item detail page,\nposition : "+ position
-                        +"\n plz replace this with your action.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "go to Item detail page,\nposition : " + position
+                        + "\n plz replace this with your action.", Toast.LENGTH_SHORT).show();
             }
         });
     }

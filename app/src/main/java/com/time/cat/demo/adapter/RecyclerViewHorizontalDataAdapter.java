@@ -34,7 +34,7 @@ import static com.time.cat.dragboardview.helper.DragHelper.TYPE_FOOTER;
  * @discription 水平排列的列表
  * @usage null
  */
-public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<RecyclerViewHorizontalDataAdapter.ViewHolder>{
+public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<RecyclerViewHorizontalDataAdapter.ViewHolder> {
 
     private Activity mContext;
     private List<Entry> mData;
@@ -42,21 +42,22 @@ public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<Recy
 
     private View mFooterView;
 
-    public void setFooterView(View view) {
-        mFooterView = view;
-        notifyItemInserted(getItemCount() - 1);
-    }
-
     public RecyclerViewHorizontalDataAdapter(Activity context, List<Entry> data) {
         this.mContext = context;
         this.mData = data;
         mInflater = LayoutInflater.from(context);
     }
 
+    public void setFooterView(View view) {
+        mFooterView = view;
+        notifyItemInserted(getItemCount() - 1);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (mFooterView != null && viewType == TYPE_FOOTER)
+        if (mFooterView != null && viewType == TYPE_FOOTER) {
             return new ViewHolder(mFooterView, TYPE_FOOTER);
+        }
         View convertView = mInflater.inflate(R.layout.recyclerview_item_entry, parent, false);
         return new ViewHolder(convertView, TYPE_CONTENT);
     }
@@ -109,22 +110,24 @@ public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<Recy
                 holder.add_subPlan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    holder.add_subPlan.setVisibility(View.GONE);
-                    holder.edit_sub_plan.setVisibility(View.VISIBLE);
-                }});
+                        holder.add_subPlan.setVisibility(View.GONE);
+                        holder.edit_sub_plan.setVisibility(View.VISIBLE);
+                    }
+                });
                 holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    holder.add_subPlan.setVisibility(View.VISIBLE);
-                    holder.edit_sub_plan.setVisibility(View.GONE);
-                }});
+                        holder.add_subPlan.setVisibility(View.VISIBLE);
+                        holder.edit_sub_plan.setVisibility(View.GONE);
+                    }
+                });
                 holder.btn_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String name = holder.editText.getText().toString();
                         if (!TextUtils.isEmpty(name)) {
                             mData.add(new Entry(
-                                    "entry id "+ name,
+                                    "entry id " + name,
                                     "name : new entry",
                                     new ArrayList<Item>()));
                             notifyItemInserted(getItemCount() - 1);
@@ -132,26 +135,25 @@ public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<Recy
                     }
                 });
                 break;
+            default:
+                break;
         }
     }
 
     @Override
     public int getItemCount() {
-        if (mFooterView == null)
-            return mData.size();
+        if (mFooterView == null) {return mData.size();}
         return mData.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mFooterView == null)
-            return TYPE_CONTENT;
-        if (position == getItemCount() - 1)
-            return TYPE_FOOTER;
+        if (mFooterView == null) {return TYPE_CONTENT;}
+        if (position == getItemCount() - 1) {return TYPE_FOOTER;}
         return TYPE_CONTENT;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements DragHorizontalViewHolderCallBack{
+    public static class ViewHolder extends RecyclerView.ViewHolder implements DragHorizontalViewHolderCallBack {
 
         ImageView title_icon;
         TextView tv_title;

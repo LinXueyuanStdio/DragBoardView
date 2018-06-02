@@ -14,10 +14,10 @@ import android.view.WindowManager;
 import com.time.cat.demo.adapter.RecyclerViewHorizontalDataAdapter;
 import com.time.cat.demo.data.Entry;
 import com.time.cat.demo.data.Item;
-import com.time.cat.dragboardview.callback.DragActivityCallBack;
-import com.time.cat.dragboardview.helper.DragHelper;
 import com.time.cat.dragboardview.DragLayout;
 import com.time.cat.dragboardview.PagerRecyclerView;
+import com.time.cat.dragboardview.callback.DragActivityCallBack;
+import com.time.cat.dragboardview.helper.DragHelper;
 import com.time.cat.dragboardview.utils.AttrAboutPhone;
 
 import java.lang.reflect.Field;
@@ -42,66 +42,6 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
     private MainActivity mActivity;
 
     private List<Entry> mData = new ArrayList<>();
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mActivity = this;
-        setContentView(R.layout.activity_main);
-
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        String brand = Build.BRAND;
-        if (brand.contains("Xiaomi")) {
-            setXiaomiDarkMode(this);
-        } else if (brand.contains("Meizu")) {
-            setMeizuDarkMode(this);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        mLayoutMain = (DragLayout) findViewById(R.id.layout_main);
-        mRecyclerView = (PagerRecyclerView) findViewById(R.id.rv_lists);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setFlingFactor(0.1f);
-
-        mAdapter = new RecyclerViewHorizontalDataAdapter(mActivity, mData);
-        View footer = getLayoutInflater().inflate(R.layout.recyclerview_footer_addlist, null, false);
-        mAdapter.setFooterView(footer);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addOnPageChangedListener(mOnPagerChangedListener);
-        mRecyclerView.addOnLayoutChangeListener(mOnLayoutChangedListener);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
-
-        mDragHelper = new DragHelper(mActivity);
-        mDragHelper.bindHorizontalRecyclerView(mRecyclerView);
-        mLayoutMain.setDragHelper(mDragHelper);
-        getDataAndRefreshView();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        AttrAboutPhone.saveAttr(this);
-        AttrAboutPhone.initScreen(this);
-        super.onWindowFocusChanged(hasFocus);
-    }
-
-    private void getDataAndRefreshView() {
-        for (int i = 0; i < 3; i ++) {
-            List<Item> itemList = new ArrayList<>();
-            for (int j = 0; j < 5; j ++) {
-                itemList.add(new Item("entry " + i + " item id " + j, "item name " + j, "info " + j));
-            }
-            mData.add(new Entry("entry id " + i, "name " + i, itemList));
-        }
-        mAdapter.notifyDataSetChanged();
-    }
 
     private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -137,19 +77,82 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
             }
         }
     };
-
     private View.OnLayoutChangeListener mOnLayoutChangedListener = new View.OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         }
     };
-
     private PagerRecyclerView.OnPageChangedListener mOnPagerChangedListener = new PagerRecyclerView.OnPageChangedListener() {
         @Override
         public void OnPageChanged(int oldPosition, int newPosition) {
 
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActivity = this;
+        setContentView(R.layout.activity_main);
+
+        //<useless>
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        String brand = Build.BRAND;
+        if (brand.contains("Xiaomi")) {
+            setXiaomiDarkMode(this);
+        } else if (brand.contains("Meizu")) {
+            setMeizuDarkMode(this);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decor = getWindow().getDecorView();
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+        //</useless>
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        mLayoutMain = (DragLayout) findViewById(R.id.layout_main);
+        mRecyclerView = (PagerRecyclerView) findViewById(R.id.rv_lists);
+
+        // 配置RecycleView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setFlingFactor(0.1f);
+
+        mAdapter = new RecyclerViewHorizontalDataAdapter(mActivity, mData);
+        View footer = getLayoutInflater().inflate(R.layout.recyclerview_footer_addlist, null, false);
+        mAdapter.setFooterView(footer);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addOnPageChangedListener(mOnPagerChangedListener);
+        mRecyclerView.addOnLayoutChangeListener(mOnLayoutChangedListener);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
+
+        // 通过 DragHelper 把 RecycleView 绑定到 DragLayout
+        mDragHelper = new DragHelper(mActivity);
+        mDragHelper.bindHorizontalRecyclerView(mRecyclerView);
+        mLayoutMain.setDragHelper(mDragHelper);
+        getDataAndRefreshView();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        AttrAboutPhone.saveAttr(this);
+        AttrAboutPhone.initScreen(this);
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    private void getDataAndRefreshView() {
+        for (int i = 0; i < 3; i++) {
+            List<Item> itemList = new ArrayList<>();
+            for (int j = 0; j < 5; j++) {
+                itemList.add(new Item("entry " + i + " item id " + j, "item name " + j, "info " + j));
+            }
+            mData.add(new Entry("entry id " + i, "name " + i, itemList));
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public DragHelper getDragHelper() {
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
     /**
      * 小米手机设置darkMode
      */
-    public static boolean setXiaomiDarkMode(Activity activity) {
+    public static void setXiaomiDarkMode(Activity activity) {
         Class<? extends Window> clazz = activity.getWindow().getClass();
         try {
             int darkModeFlag = 0;
@@ -170,17 +173,15 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
             darkModeFlag = field.getInt(layoutParams);
             Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
             extraFlagField.invoke(activity.getWindow(), darkModeFlag, darkModeFlag);
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
      * 魅族手机设置darkMode
      */
-    public static boolean setMeizuDarkMode(Activity activity) {
+    public static void setMeizuDarkMode(Activity activity) {
         boolean result = false;
         try {
             WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
@@ -198,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
             result = true;
         } catch (Exception e) {
         }
-        return result;
     }
 }
 

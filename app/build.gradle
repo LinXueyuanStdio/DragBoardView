@@ -22,13 +22,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // material dialog
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
 
-//    compile project(path: ':DragBoardView')
-    implementation 'com.github.LinXueyuanStdio:DragBoardView:v1.0.0'
+    implementation project(path: ':DragBoardView')
+//    implementation 'com.github.LinXueyuanStdio:DragBoardView:v1.0.0'
 }
 

@@ -134,8 +134,7 @@ public class PagerRecyclerView extends RecyclerView {
 
     @Override
     public Adapter getAdapter() {
-        if (mViewPagerAdapter != null)
-            return mViewPagerAdapter.mAdapter;
+        if (mViewPagerAdapter != null) {return mViewPagerAdapter.mAdapter;}
         return null;
     }
 
@@ -168,15 +167,13 @@ public class PagerRecyclerView extends RecyclerView {
             LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(getContext()) {
                 @Override
                 public PointF computeScrollVectorForPosition(int targetPosition) {
-                    if (getLayoutManager() == null)
-                        return null;
+                    if (getLayoutManager() == null) {return null;}
                     return ((LinearLayoutManager) getLayoutManager()).computeScrollVectorForPosition(targetPosition);
                 }
 
                 @Override
                 protected void onTargetFound(View targetView, State state, Action action) {
-                    if (getLayoutManager() == null)
-                        return;
+                    if (getLayoutManager() == null) {return;}
                     int dx = calculateDxToMakeVisible(targetView, getHorizontalSnapPreference());
                     int dy = calculateDyToMakeVisible(targetView, getVerticalSnapPreference());
                     if (dx > 0) {
@@ -302,20 +299,16 @@ public class PagerRecyclerView extends RecyclerView {
                         int spanX = mCurView.getLeft() - mFirstLeftWhenDragging;
                         // if user is tending to cancel paging action, don't perform position changing
                         if (spanX > mCurView.getWidth() * mTriggerOffset && mCurView.getLeft() >= mMaxLeftWhenDragging) {
-                            if (!reverseLayout) targetPosition--;
-                            else targetPosition++;
+                            if (!reverseLayout) {targetPosition--;} else {targetPosition++;}
                         } else if (spanX < mCurView.getWidth() * -mTriggerOffset && mCurView.getLeft() <= mMinLeftWhenDragging) {
-                            if (!reverseLayout) targetPosition++;
-                            else targetPosition--;
+                            if (!reverseLayout) {targetPosition++;} else {targetPosition--;}
                         }
                     } else {
                         int spanY = mCurView.getTop() - mFirstTopWhenDragging;
                         if (spanY > mCurView.getHeight() * mTriggerOffset && mCurView.getTop() >= mMaxTopWhenDragging) {
-                            if (!reverseLayout) targetPosition--;
-                            else targetPosition++;
+                            if (!reverseLayout) {targetPosition--;} else {targetPosition++;}
                         } else if (spanY < mCurView.getHeight() * -mTriggerOffset && mCurView.getTop() <= mMinTopWhenDragging) {
-                            if (!reverseLayout) targetPosition++;
-                            else targetPosition--;
+                            if (!reverseLayout) {targetPosition++;} else {targetPosition--;}
                         }
                     }
                 }
@@ -341,13 +334,10 @@ public class PagerRecyclerView extends RecyclerView {
     }
 
 
-
-
     @NonNull
     protected RecyclerViewPagerAdapter ensureRecyclerViewPagerAdapter(Adapter adapter) {
         return (adapter instanceof RecyclerViewPagerAdapter) ? (RecyclerViewPagerAdapter) adapter : new RecyclerViewPagerAdapter(this, adapter);
     }
-
 
 
     public void addOnPageChangedListener(OnPageChangedListener listener) {
@@ -369,7 +359,7 @@ public class PagerRecyclerView extends RecyclerView {
         }
     }
 
-    public void nextPage(){
+    public void nextPage() {
         smoothScrollToPosition(getCurrentPosition() + 1);
     }
 
