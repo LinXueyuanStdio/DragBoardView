@@ -53,11 +53,11 @@ public class PagerRecyclerView extends RecyclerView {
     private boolean reverseLayout = false;
 
     public PagerRecyclerView(Context context) {
-        super(context, null);
+        this(context, null);
     }
 
     public PagerRecyclerView(Context context, AttributeSet attrs) {
-        super(context, attrs, 0);
+        this(context, attrs, 0);
     }
 
     public PagerRecyclerView(Context context, AttributeSet attrs, int defStyle) {

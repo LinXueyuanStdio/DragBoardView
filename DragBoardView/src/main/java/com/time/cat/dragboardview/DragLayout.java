@@ -38,7 +38,7 @@ public class DragLayout extends RelativeLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (mDragHelper != null) {
-            if (mDragHelper.isDragging()) {return true;}
+            if (mDragHelper.isDraggingItem() || mDragHelper.isDraggingColumn()) {return true;}
         }
         return super.onInterceptTouchEvent(ev);
     }
@@ -53,7 +53,13 @@ public class DragLayout extends RelativeLayout {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (mDragHelper != null) {mDragHelper.drop();}
+                if (mDragHelper != null) {
+                    if (mDragHelper.isDraggingItem()) {
+                        mDragHelper.dropItem();
+                    } else if (mDragHelper.isDraggingColumn()) {
+                        mDragHelper.dropCol();
+                    }
+                }
                 break;
             default:
                 break;

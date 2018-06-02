@@ -19,9 +19,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.time.cat.demo.R;
 import com.time.cat.demo.data.Entry;
 import com.time.cat.demo.data.Item;
+import com.time.cat.dragboardview.callback.DragActivityCallBack;
+import com.time.cat.dragboardview.callback.DragHorizontalAdapterCallBack;
 import com.time.cat.dragboardview.callback.DragHorizontalViewHolderCallBack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.time.cat.dragboardview.helper.DragHelper.TYPE_CONTENT;
@@ -34,13 +37,18 @@ import static com.time.cat.dragboardview.helper.DragHelper.TYPE_FOOTER;
  * @discription 水平排列的列表
  * @usage null
  */
-public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<RecyclerViewHorizontalDataAdapter.ViewHolder> {
+public class RecyclerViewHorizontalDataAdapter
+        extends RecyclerView.Adapter<RecyclerViewHorizontalDataAdapter.ViewHolder>
+        implements DragHorizontalAdapterCallBack{
 
     private Activity mContext;
     private List<Entry> mData;
     private LayoutInflater mInflater;
 
     private View mFooterView;
+
+    private int mDragPosition;//正在拖动的 View 的 position
+    private boolean mHideDragItem; // 是否隐藏正在拖动的 position
 
     public RecyclerViewHorizontalDataAdapter(Activity context, List<Entry> data) {
         this.mContext = context;
@@ -67,11 +75,28 @@ public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<Recy
         switch (getItemViewType(position)) {
             case TYPE_CONTENT:
                 final Entry entry = mData.get(position);
+
+                if (position == mDragPosition && mHideDragItem) {
+                    holder.itemView.setVisibility(View.INVISIBLE);
+                    return;
+                } else {
+                    holder.itemView.setVisibility(View.VISIBLE);
+                }
+
                 holder.tv_title.setText(entry.getId());
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        holder.itemView.setTag(entry);
+                        ((DragActivityCallBack) mContext).getDragHelper()
+                                .dragCol(holder.itemView, holder.getAdapterPosition());
+                        return true;
+                    }
+                });
                 final List<Item> itemList = entry.getItemList();
                 LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
                 holder.rv_item.setLayoutManager(layoutManager);
-                final RecyclerViewVerticalDataAdapter itemAdapter = new RecyclerViewVerticalDataAdapter(mContext, itemList);
+                final RecyclerViewVerticalDataVerticalAdapter itemAdapter = new RecyclerViewVerticalDataVerticalAdapter(mContext, itemList);
                 holder.rv_item.setAdapter(itemAdapter);
                 holder.add_task.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -153,8 +178,71 @@ public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<Recy
         return TYPE_CONTENT;
     }
 
+    @Override
+    public void onDrag(int position) {
+        mDragPosition = position;
+        mHideDragItem = true;
+        notifyItemChanged(position);
+    }
+
+    @Override
+    public void onDrop(int page, int position, Object tag) {
+        mHideDragItem = false;
+//        notifyItemChanged(position);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDragOut() {
+        if (mDragPosition >= 0 && mDragPosition < mData.size()) {
+            mData.remove(mDragPosition);
+            notifyDataSetChanged();// 此处如果用 notifyItemRemove 下一次选定时的 position 是错的
+            mDragPosition = -1;
+        }
+    }
+
+    @Override
+    public void onDragIn(int position, Object ColumnObject) {
+        Entry entry = (Entry) ColumnObject;
+        if (position > mData.size()) {// 如果拖进来时候的 position 比当前 列表的长度大，就添加到列表末端
+            position = mData.size();
+        }
+        mData.add(position, entry);
+        notifyItemInserted(position);
+        mDragPosition = position;
+        mHideDragItem = true;
+    }
+
+    @Override
+    public void updateDragItemVisibility(int position) {
+        if (mDragPosition >= 0 && mDragPosition < mData.size() && position < mData.size() && mDragPosition != position) {
+            if (Math.abs(mDragPosition - position) == 1) {
+                notifyItemChanged(mDragPosition);
+                Collections.swap(mData, mDragPosition, position);
+                mDragPosition = position;
+                notifyItemChanged(position);
+            } else {
+                notifyItemChanged(mDragPosition);
+                if (mDragPosition > position) {
+                    for (int i = mDragPosition; i > position; i--) {
+                        Collections.swap(mData, i, i - 1);
+                        notifyItemChanged(i);
+                    }
+                } else {
+                    for (int i = mDragPosition; i < position; i++) {
+                        Collections.swap(mData, i, i + 1);
+                        notifyItemChanged(i);
+                    }
+                }
+                mDragPosition = position;
+                notifyItemChanged(position);
+            }
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder implements DragHorizontalViewHolderCallBack {
 
+        RelativeLayout col_content_container;
         ImageView title_icon;
         TextView tv_title;
         RecyclerView rv_item;
@@ -169,6 +257,7 @@ public class RecyclerViewHorizontalDataAdapter extends RecyclerView.Adapter<Recy
         public ViewHolder(View convertView, int itemType) {
             super(convertView);
             if (itemType == TYPE_CONTENT) {
+                col_content_container = convertView.findViewById(R.id.col_content_container);
                 title_icon = convertView.findViewById(R.id.title_icon);
                 tv_title = convertView.findViewById(R.id.tv_title);
                 rv_item = convertView.findViewById(R.id.rv);
