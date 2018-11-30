@@ -1,14 +1,12 @@
 # DragBoardView
 
-Android 可拖拽的看板视图, 支持项拖拽、列拖拽，支持自动居中，
+DragBoardView is a draggable kanban/board view for Android. it supports `drag item`, `drag column`, `auto center`
 
-## Just use it like a RecyclerView!
+You can just use it like a RecyclerView!
 
-Recyclerview:
+## Just use it like a RecyclerView! [中文文档](https://github.com/LinXueyuanStdio/DragBoardView/blob/master/README_zh.md)
 
-Recycler view is same as listview but recyclerview is added in android support lib for material design concept.
-
-Example:
+How to use Recyclerview:
 
 <details>
   <summary>1. Add dependency for recyclerview</summary>
@@ -193,7 +191,11 @@ public class MainActivity extends AppCompatActivity {
 
 </details>
 
+
+
 As for DragBoardView, it's all the same.
+
+How to use DragBoardView:
 
 <details>
   <summary>1. Add dependency for DragBoardView</summary>

@@ -2,42 +2,39 @@
 
 Android 可拖拽的看板视图, 支持项拖拽、列拖拽，支持自动居中。
 
-## Just use it like a RecyclerView!
-
 简单易用，和 `RecyclerView` 用法完全一样！
 
-How to use Recyclerview:
+## 像 `RecyclerView` 一样使用 `DragBoardView` ! [中文文档](https://github.com/LinXueyuanStdio/DragBoardView/blob/master/README_zh.md)
+
+`Recyclerview` 的用法:
 
 <details>
-  <summary>1. Add dependency for recyclerview</summary>
+  <summary>1. 添加 recyclerview 的依赖</summary>
 
 ```
 compile 'com.android.support:recyclerview-v7:23.1.0'
 ```
 
-Add recyclerview in main layout file
+在 xml 布局文件中声明:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/item_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        />
+        android:layout_height="match_parent"/>
 </LinearLayout>
 ```
 </details>
 
 <details>
-  <summary>2. Make one item layout xml file</summary>
+  <summary>2. 写 item 的布局</summary>
 
 ```xml
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -61,9 +58,9 @@ android:layout_height="wrap_content">
 </details>
 
 <details>
-  <summary>3. Make model class for each item in list.</summary>
+  <summary>3. 写 item 对应的数据类.</summary>
 
- it can be any custom class.
+什么类都行
 
 ```java
 public class Item {
@@ -85,18 +82,9 @@ public class Item {
 </details>
 
 <details>
-  <summary>4. make adapter for recyclerview</summary>
+  <summary>4. 写适配器 adapter</summary>
 
 ```java
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import com.codexpedia.list.viewholder.R;
-import java.util.ArrayList;
-
 public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.ViewHolder> {
 
     //All methods in this adapter are required for a bare minimum recyclerview adapter
@@ -148,19 +136,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
 
 
 <details>
-  <summary>5. bind adapter with recyclerview</summary>
+  <summary>5. 将适配器 adapter 和 recyclerview 绑定</summary>
 
 ```java
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
-import com.codexpedia.list.viewholder.R;
-
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
@@ -191,16 +169,14 @@ public class MainActivity extends AppCompatActivity {
 
 </details>
 
+`DragBoardView` 的用法和 `RecyclerView` 一样。
 
-
-As for DragBoardView, it's all the same.
-
-How to use DragBoardView:
+`DragBoardView` 的用法:
 
 <details>
-  <summary>1. Add dependency for DragBoardView</summary>
+  <summary>1. 添加 DragBoardView 的依赖</summary>
 
-Add it in your `root` `build.gradle` at the end of repositories:
+在项目根目录的 `build.gradle` 添加:
 ```gradle
 allprojects {
     repositories {
@@ -209,19 +185,45 @@ allprojects {
     }
 }
 ```
-Add the dependency
+
+添加依赖
+
 ```gradle
 dependencies {
     compile 'com.github.LinXueyuanStdio:DragBoardView:v1.0.0'
 }
 ```
 
+在 `xml` 中声明使用
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"/>
+
+    <com.time.cat.dragboardview.DragBoardView
+        android:id="@+id/layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"/>
+
+</RelativeLayout>
+```
+
 </details>
 
 <details>
-  <summary>2. Make two item layout xml files.</summary>
+  <summary>2. 写 column 和 item 的布局文件.</summary>
 
-One for each column item. it should contains a `RecyclerView`
+column 是列，它必须包含一个 `RecyclerView`
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -239,7 +241,7 @@ One for each column item. it should contains a `RecyclerView`
 </RelativeLayout>
 ```
 
-One for the item in each column.
+item 是列中的项，它的布局请随便写
 
 ```xml
 <TextView
@@ -252,9 +254,9 @@ One for the item in each column.
 </details>
 
 <details>
-  <summary>3. Make model class for each column and each item in list.</summary>
+  <summary>3. 写 column 和 item 对应的数据类</summary>
 
-for each column, it should implement `DragColumn` interface.
+column 类必须实现 `DragColumn` 接口.
 
 ```java
 public class Entry implements DragColumn {
@@ -289,7 +291,7 @@ public class Entry implements DragColumn {
 
 ```
 
-for each item in the column, it should implement `DragItem` interface.
+item 类必须实现 `DragItem` 接口.
 
 ```java
 public class Item implements DragItem {
@@ -332,17 +334,19 @@ public class Item implements DragItem {
 </details>
 
 <details>
-  <summary>4. make adapter for DragBoardView</summary>
+  <summary>4. 写适配器 adapter</summary>
+
+有两个适配器，一个是列适配器，一个是列中包含的 `RecyclerView` 所需的适配器
 
 ```java
-public class ColumnAdapter extends HorizontalAdapter<ColumnAdapter.ViewHolder>
-public class ItemAdapter extends VerticalAdapter<ItemAdapter.ViewHolder>
+public class ColumnAdapter extends HorizontalAdapter<ColumnAdapter.ViewHolder> {...}
+public class ItemAdapter extends VerticalAdapter<ItemAdapter.ViewHolder> {...}
 ```
 </details>
 
 
 <details>
-  <summary>5. bind adapter with DragBoardView</summary>
+  <summary>5. 将适配器 adapter 和 DragBoardView 绑定</summary>
 
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -370,14 +374,14 @@ public class MainActivity extends AppCompatActivity {
 
 <img src="art/device-2018-04-04-085351.gif" width="360" height="645"/>
 
-## ScreenShot
+## 截图
 
 |  |  |  |
 |:---:|:---:|:---:|
 |![截图1](/art/device-2018-04-04-085942.png)|![截图2](/art/device-2018-04-04-090017.png)|![截图3](/art/device-2018-04-04-090030.png)|
 |![截图4](/art/device-2018-04-04-090047.png)|![截图5](/art/device-2018-04-04-090115.png)|
 
-## Advance
+## 进阶
 
 Meanwhile, PagerRecyclerView is able to be customized by these 3 params:
 
@@ -387,7 +391,7 @@ Meanwhile, PagerRecyclerView is able to be customized by these 3 params:
 | triggerOffset | float | trigger offset, default 0.25f |
 | flingFactor | float | fling factor, default 0.15f |
 
-demo is more clear
+demo 给出了最小实现。
 
 ## demo apk
 [download](art/app-debug.apk)
