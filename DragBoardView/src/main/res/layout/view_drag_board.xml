@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.time.cat.dragboardview.DragLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.time.cat.dragboardview.PagerRecyclerView
+        android:id="@+id/rv_lists"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:scrollbars="horizontal"
+        app:singlePageFling="true"
+        app:triggerOffset="0.1"/>
+
+</com.time.cat.dragboardview.DragLayout>

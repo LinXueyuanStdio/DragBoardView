@@ -336,7 +336,9 @@ public class PagerRecyclerView extends RecyclerView {
 
     @NonNull
     protected RecyclerViewPagerAdapter ensureRecyclerViewPagerAdapter(Adapter adapter) {
-        return (adapter instanceof RecyclerViewPagerAdapter) ? (RecyclerViewPagerAdapter) adapter : new RecyclerViewPagerAdapter(this, adapter);
+        return (adapter instanceof RecyclerViewPagerAdapter)
+                ? (RecyclerViewPagerAdapter) adapter
+                : new RecyclerViewPagerAdapter(this, adapter);
     }
 
 

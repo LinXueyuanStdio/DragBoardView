@@ -4,20 +4,17 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.time.cat.demo.adapter.RecyclerViewHorizontalDataAdapter;
+import com.time.cat.demo.adapter.ColumnAdapter;
 import com.time.cat.demo.data.Entry;
 import com.time.cat.demo.data.Item;
-import com.time.cat.dragboardview.DragLayout;
-import com.time.cat.dragboardview.PagerRecyclerView;
-import com.time.cat.dragboardview.callback.DragActivityCallBack;
-import com.time.cat.dragboardview.helper.DragHelper;
+import com.time.cat.dragboardview.DragBoardView;
+import com.time.cat.dragboardview.model.DragColumn;
+import com.time.cat.dragboardview.model.DragItem;
 import com.time.cat.dragboardview.utils.AttrAboutPhone;
 
 import java.lang.reflect.Field;
@@ -32,67 +29,15 @@ import java.util.List;
  * @discription 主界面
  * @usage null
  */
-public class MainActivity extends AppCompatActivity implements DragActivityCallBack {
+public class MainActivity extends AppCompatActivity {
 
-    private PagerRecyclerView mRecyclerView;
-    private RecyclerViewHorizontalDataAdapter mAdapter;
-    private DragLayout mLayoutMain;
-    private DragHelper mDragHelper;
-
-    private MainActivity mActivity;
-
-    private List<Entry> mData = new ArrayList<>();
-
-    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            int childCount = mRecyclerView.getChildCount();
-            int width = mRecyclerView.getChildAt(0).getWidth();
-            int padding = (mRecyclerView.getWidth() - width) / 2;
-
-            for (int j = 0; j < childCount; j++) {
-                View v = recyclerView.getChildAt(j);
-                //往左 从 padding 到 -(v.getWidth()-padding) 的过程中，由大到小
-                float rate = 0;
-                if (v.getLeft() <= padding) {
-                    if (v.getLeft() >= padding - v.getWidth()) {
-                        rate = (padding - v.getLeft()) * 1f / v.getWidth();
-                    } else {
-                        rate = 1;
-                    }
-                    v.setScaleX(1 - rate * 0.1f);
-
-                } else {
-                    //往右 从 padding 到 recyclerView.getWidth()-padding 的过程中，由大到小
-                    if (v.getLeft() <= recyclerView.getWidth() - padding) {
-                        rate = (recyclerView.getWidth() - padding - v.getLeft()) * 1f / v.getWidth();
-                    }
-                    v.setScaleX(0.9f + rate * 0.1f);
-                }
-            }
-        }
-    };
-    private View.OnLayoutChangeListener mOnLayoutChangedListener = new View.OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        }
-    };
-    private PagerRecyclerView.OnPageChangedListener mOnPagerChangedListener = new PagerRecyclerView.OnPageChangedListener() {
-        @Override
-        public void OnPageChanged(int oldPosition, int newPosition) {
-
-        }
-    };
+    private ColumnAdapter mAdapter;
+    DragBoardView dragBoardView;
+    private List<DragColumn> mData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = this;
         setContentView(R.layout.activity_main);
 
         //<useless>
@@ -111,28 +56,11 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mLayoutMain = (DragLayout) findViewById(R.id.layout_main);
-        mRecyclerView = (PagerRecyclerView) findViewById(R.id.rv_lists);
+        dragBoardView = findViewById(R.id.layout_main);
+        mAdapter = new ColumnAdapter(this);
+        mAdapter.setData(mData);
+        dragBoardView.setHorizontalAdapter(mAdapter);
 
-        // 配置RecycleView
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setFlingFactor(0.1f);
-
-        mAdapter = new RecyclerViewHorizontalDataAdapter(mActivity, mData);
-        View footer = getLayoutInflater().inflate(R.layout.recyclerview_footer_addlist, null, false);
-        mAdapter.setFooterView(footer);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addOnPageChangedListener(mOnPagerChangedListener);
-        mRecyclerView.addOnLayoutChangeListener(mOnLayoutChangedListener);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
-
-        // 通过 DragHelper 把 RecycleView 绑定到 DragLayout
-        mDragHelper = new DragHelper(mActivity);
-        mDragHelper.bindHorizontalRecyclerView(mRecyclerView);
-        mLayoutMain.setDragHelper(mDragHelper);
         getDataAndRefreshView();
     }
 
@@ -145,18 +73,13 @@ public class MainActivity extends AppCompatActivity implements DragActivityCallB
 
     private void getDataAndRefreshView() {
         for (int i = 0; i < 3; i++) {
-            List<Item> itemList = new ArrayList<>();
+            List<DragItem> itemList = new ArrayList<>();
             for (int j = 0; j < 5; j++) {
                 itemList.add(new Item("entry " + i + " item id " + j, "item name " + j, "info " + j));
             }
             mData.add(new Entry("entry id " + i, "name " + i, itemList));
         }
         mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public DragHelper getDragHelper() {
-        return mDragHelper;
     }
 
     // below is useless

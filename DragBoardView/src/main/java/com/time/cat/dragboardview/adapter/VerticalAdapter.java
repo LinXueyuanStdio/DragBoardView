@@ -1,18 +1,16 @@
-package com.time.cat.demo.adapter;
+package com.time.cat.dragboardview.adapter;
 
-import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.time.cat.demo.R;
-import com.time.cat.demo.data.Item;
-import com.time.cat.dragboardview.callback.DragActivityCallBack;
-import com.time.cat.dragboardview.callback.DragVerticalAdapterCallBack;
+import com.time.cat.dragboardview.callback.DragVerticalAdapter;
+import com.time.cat.dragboardview.helper.DragHelper;
+import com.time.cat.dragboardview.model.DragItem;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,55 +21,38 @@ import java.util.List;
  * @discription 垂直排列的子项卡片
  * @usage null
  */
-public class RecyclerViewVerticalDataVerticalAdapter extends RecyclerView.Adapter<RecyclerViewVerticalDataVerticalAdapter.ViewHolder> implements DragVerticalAdapterCallBack {
+public abstract class VerticalAdapter<VH extends RecyclerView.ViewHolder>
+        extends RecyclerView.Adapter<VH>
+        implements DragVerticalAdapter {
 
-    private Activity mContext;
-    private List<Item> mData;
-    private LayoutInflater mInflater;
+    protected Context mContext;
+    private List<DragItem> mData;
+    @NonNull
+    private DragHelper dragHelper;
 
     private int mDragPosition;//正在拖动的 View 的 position
     private boolean mHideDragItem; // 是否隐藏正在拖动的 position
 
-    public RecyclerViewVerticalDataVerticalAdapter(Activity context, List<Item> data) {
+    public VerticalAdapter(Context context, @NonNull DragHelper dragHelper) {
         this.mContext = context;
-        this.mData = data;
-        this.mInflater = LayoutInflater.from(context);
+        this.mData = new ArrayList<>();
+        this.dragHelper = dragHelper;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View convertView = mInflater.inflate(R.layout.recyclerview_item_item, parent, false);
-        return new ViewHolder(convertView);
-    }
+    public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        final Item item = mData.get(holder.getAdapterPosition());
-        holder.item_title.setText(item.getItemName());
-
+    public void onBindViewHolder(VH holder, final int position) {
         if (position == mDragPosition && mHideDragItem) {
             holder.itemView.setVisibility(View.INVISIBLE);
         } else {
             holder.itemView.setVisibility(View.VISIBLE);
         }
+        final DragItem item = mData.get(holder.getAdapterPosition());
+        holder.itemView.setTag(item);
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                v.setTag(item);
-                ((DragActivityCallBack) mContext).getDragHelper().dragItem(v, position);
-                return true;
-            }
-        });
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //do something
-                Toast.makeText(mContext, "go to Item detail page,\nposition : " + position
-                        + "\n plz replace this with your action.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        onBindViewHolder(mContext, holder, item, holder.getAdapterPosition());
     }
 
     @Override
@@ -87,7 +68,7 @@ public class RecyclerViewVerticalDataVerticalAdapter extends RecyclerView.Adapte
     }
 
     @Override
-    public void onDrop(int page, int position, Object tag) {
+    public void onDrop(int page, int position, DragItem tag) {
         mHideDragItem = false;
         notifyItemChanged(position);
     }
@@ -102,12 +83,11 @@ public class RecyclerViewVerticalDataVerticalAdapter extends RecyclerView.Adapte
     }
 
     @Override
-    public void onDragIn(int position, Object tag) {
-        Item task = (Item) tag;
+    public void onDragIn(int position, DragItem item) {
         if (position > mData.size()) {// 如果拖进来时候的 position 比当前 列表的长度大，就添加到列表末端
             position = mData.size();
         }
-        mData.add(position, task);
+        mData.add(position, item);
         notifyItemInserted(position);
         mDragPosition = position;
         mHideDragItem = true;
@@ -140,13 +120,26 @@ public class RecyclerViewVerticalDataVerticalAdapter extends RecyclerView.Adapte
         }
     }
 
+    public void dragItem(View columnView, int position) {
+        dragHelper.dragItem(columnView, position);
+    }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView item_title;
+    public void dragItem(VH holder) {
+        dragItem(holder.itemView, holder.getAdapterPosition());
+    }
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            item_title = itemView.findViewById(R.id.item_title);
-        }
+    public void setDragHelper(DragHelper dragHelper) {
+        this.dragHelper = dragHelper;
+    }
+
+    public abstract void onBindViewHolder(Context context, VH holder, @NonNull DragItem item, final int position);
+
+    public void setData(List<DragItem> mData) {
+        this.mData = mData;
+        notifyDataSetChanged();
+    }
+
+    public List<DragItem> getData() {
+        return mData;
     }
 }

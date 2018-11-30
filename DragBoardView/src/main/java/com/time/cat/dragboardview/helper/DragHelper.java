@@ -1,7 +1,6 @@
 package com.time.cat.dragboardview.helper;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -18,9 +17,11 @@ import android.widget.ImageView;
 
 import com.time.cat.dragboardview.DragLayout;
 import com.time.cat.dragboardview.PagerRecyclerView;
-import com.time.cat.dragboardview.callback.DragHorizontalAdapterCallBack;
-import com.time.cat.dragboardview.callback.DragHorizontalViewHolderCallBack;
-import com.time.cat.dragboardview.callback.DragVerticalAdapterCallBack;
+import com.time.cat.dragboardview.callback.DragHorizontalAdapter;
+import com.time.cat.dragboardview.callback.DragHorizontalViewHolder;
+import com.time.cat.dragboardview.callback.DragVerticalAdapter;
+import com.time.cat.dragboardview.model.DragColumn;
+import com.time.cat.dragboardview.model.DragItem;
 import com.time.cat.dragboardview.utils.AttrAboutPhone;
 
 import java.util.Timer;
@@ -43,9 +44,9 @@ public class DragHelper {
     private RecyclerView mCurrentVerticalRecycleView;
     private PagerRecyclerView mHorizontalRecyclerView;
 
-    private Object tag;
+    private DragItem dragItem;
     private boolean isDraggingItem = false;//抓起=true，否则=false
-    private Object columnObject;
+    private DragColumn dragColumn;
     private boolean isDraggingColumn = false;//是否正在拖拽一列，抓起=true，否则=false
 
     private float mBornLocationX, mBornLocationY;//抓起时 view 的坐标
@@ -70,7 +71,7 @@ public class DragHelper {
 
 
     @SuppressLint("ClickableViewAccessibility")
-    public DragHelper(Activity activity) {
+    public DragHelper(Context activity) {
         mWindowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
         mWindowParams = new WindowManager.LayoutParams();
         mWindowParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
@@ -102,7 +103,8 @@ public class DragHelper {
     }
 
 
-    //<drag column>
+    //region drag column
+
     /**
      * 是否在拖动一列
      */
@@ -113,8 +115,8 @@ public class DragHelper {
     /**
      * 抓起
      *
-     * @param columnView  抓起的 View
-     * @param position 抓起的 View 在 横向RecyclerView 的 position
+     * @param columnView 抓起的 View
+     * @param position   抓起的 View 在 横向RecyclerView 的 position
      */
     public void dragCol(View columnView, int position) {
         columnView.destroyDrawingCache();
@@ -127,11 +129,13 @@ public class DragHelper {
 
             isDraggingColumn = true;
 
-            columnObject = columnView.getTag();
+            if (columnView.getTag() instanceof DragColumn) {
+                dragColumn = (DragColumn) columnView.getTag();
+            }
             int dragPage = mHorizontalRecyclerView.getCurrentPosition();
             RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) mHorizontalRecyclerView.findViewHolderForAdapterPosition(dragPage);
             if (holder != null && holder.itemView != null && holder.getItemViewType() == TYPE_CONTENT) {
-                mCurrentVerticalRecycleView = ((DragHorizontalViewHolderCallBack) holder).getRecyclerView();
+                mCurrentVerticalRecycleView = ((DragHorizontalViewHolder) holder).getRecyclerView();
                 mPagerPosition = dragPage;
             }
 
@@ -171,7 +175,7 @@ public class DragHelper {
                 mHorizontalRecyclerView.backToCurrentPage();
             }
 
-            getHorizontalAdapter().onDrop(mPagerPosition, mPosition, tag);
+            getHorizontalAdapter().onDrop(mPagerPosition, mPosition, dragColumn);
         }
     }
 
@@ -184,9 +188,9 @@ public class DragHelper {
             RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) mHorizontalRecyclerView.findViewHolderForAdapterPosition(newPage);
             if (holder != null && holder.itemView != null && holder.getItemViewType() == TYPE_CONTENT) {
                 getHorizontalAdapter().onDragOut();
-                mCurrentVerticalRecycleView = ((DragHorizontalViewHolderCallBack) holder).getRecyclerView();
+                mCurrentVerticalRecycleView = ((DragHorizontalViewHolder) holder).getRecyclerView();
                 mPagerPosition = newPage;
-                getHorizontalAdapter().onDragIn(mPosition, columnObject);
+                getHorizontalAdapter().onDragIn(mPosition, dragColumn);
 
             }
         }
@@ -220,11 +224,9 @@ public class DragHelper {
      *
      * @return Adapter
      */
-    private DragHorizontalAdapterCallBack getHorizontalAdapter() {
-        return (DragHorizontalAdapterCallBack) mHorizontalRecyclerView.getAdapter();
+    private DragHorizontalAdapter getHorizontalAdapter() {
+        return (DragHorizontalAdapter) mHorizontalRecyclerView.getAdapter();
     }
-    //</drag column>
-
 
     /**
      * 绑定 横向的 RecyclerView
@@ -238,8 +240,11 @@ public class DragHelper {
             throw new RuntimeException("LayoutManager must be LinearLayoutManager");
         }
     }
+    //endregion
 
-    //<drag item>
+
+    //region drag item
+
     /**
      * 是否在拖动一项
      */
@@ -263,11 +268,13 @@ public class DragHelper {
             mDragImageView.setAlpha(0.8f);
 
             isDraggingItem = true;
-            tag = dragger.getTag();
+            if (dragger.getTag() instanceof DragItem) {
+                dragItem = (DragItem) dragger.getTag();
+            }
             int dragPage = mHorizontalRecyclerView.getCurrentPosition();
             RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) mHorizontalRecyclerView.findViewHolderForAdapterPosition(dragPage);
             if (holder != null && holder.itemView != null && holder.getItemViewType() == TYPE_CONTENT) {
-                mCurrentVerticalRecycleView = ((DragHorizontalViewHolderCallBack) holder).getRecyclerView();
+                mCurrentVerticalRecycleView = ((DragHorizontalViewHolder) holder).getRecyclerView();
 
                 mPagerPosition = dragPage;
             }
@@ -308,7 +315,7 @@ public class DragHelper {
                 mHorizontalRecyclerView.backToCurrentPage();
             }
 
-            getCurrentVerticalAdapter().onDrop(mPagerPosition, mPosition, tag);
+            getCurrentVerticalAdapter().onDrop(mPagerPosition, mPosition, dragItem);
         }
     }
 
@@ -322,10 +329,10 @@ public class DragHelper {
             if (holder != null && holder.itemView != null && holder.getItemViewType() == TYPE_CONTENT) {
                 getCurrentVerticalAdapter().onDragOut();
 
-                mCurrentVerticalRecycleView = ((DragHorizontalViewHolderCallBack) holder).getRecyclerView();
+                mCurrentVerticalRecycleView = ((DragHorizontalViewHolder) holder).getRecyclerView();
                 mPagerPosition = newPage;
 
-                getCurrentVerticalAdapter().onDragIn(mPosition, tag);
+                getCurrentVerticalAdapter().onDragIn(mPosition, dragItem);
             }
         }
     }
@@ -356,13 +363,14 @@ public class DragHelper {
      *
      * @return Adapter
      */
-    private DragVerticalAdapterCallBack getCurrentVerticalAdapter() {
-        return (DragVerticalAdapterCallBack) mCurrentVerticalRecycleView.getAdapter();
+    private DragVerticalAdapter getCurrentVerticalAdapter() {
+        return (DragVerticalAdapter) mCurrentVerticalRecycleView.getAdapter();
     }
-    //</drag item>
+    //endregion
 
 
-    //<common>
+    //region compute
+
     /**
      * 更新拖动点的坐标
      *
@@ -516,5 +524,5 @@ public class DragHelper {
         }
         return mPagerPosition;
     }
-    //</common>
+    //endregion
 }
