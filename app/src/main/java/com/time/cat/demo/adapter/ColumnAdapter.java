@@ -18,7 +18,6 @@ import com.time.cat.demo.R;
 import com.time.cat.demo.data.Entry;
 import com.time.cat.demo.data.Item;
 import com.time.cat.dragboardview.adapter.HorizontalAdapter;
-import com.time.cat.dragboardview.callback.DragHorizontalAdapter;
 import com.time.cat.dragboardview.model.DragColumn;
 import com.time.cat.dragboardview.model.DragItem;
 
@@ -32,8 +31,7 @@ import java.util.List;
  * @discription 水平排列的列表
  * @usage null
  */
-public class ColumnAdapter extends HorizontalAdapter<ColumnAdapter.ViewHolder>
-        implements DragHorizontalAdapter {
+public class ColumnAdapter extends HorizontalAdapter<ColumnAdapter.ViewHolder> {
 
     public ColumnAdapter(Context context) {
         super(context);
