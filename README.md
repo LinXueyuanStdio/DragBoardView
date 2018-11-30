@@ -34,6 +34,8 @@ Add recyclerview in main layout file
         />
 </LinearLayout>
 ```
+
+```
 </details>
 
 <details>
@@ -214,6 +216,31 @@ Add the dependency
 dependencies {
     compile 'com.github.LinXueyuanStdio:DragBoardView:v1.0.0'
 }
+```
+
+declare it in your main layout xml file:
+
+```xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"/>
+
+    <com.time.cat.dragboardview.DragBoardView
+        android:id="@+id/layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"/>
+
+</RelativeLayout>
 ```
 
 </details>
