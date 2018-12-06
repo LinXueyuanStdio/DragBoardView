@@ -1,5 +1,8 @@
 # DragBoardView
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/660b2a6d67e9426fa887d782fdc22bd1)](https://app.codacy.com/app/LinXueyuanStdio/DragBoardView?utm_source=github.com&utm_medium=referral&utm_content=LinXueyuanStdio/DragBoardView&utm_campaign=Badge_Grade_Dashboard)
+
+
 DragBoardView is a draggable kanban/board view for Android. it supports `drag item`, `drag column`, `auto center`
 
 You can just use it like a RecyclerView!
