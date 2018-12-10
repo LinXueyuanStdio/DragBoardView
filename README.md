@@ -38,7 +38,6 @@ Add recyclerview in main layout file
 </LinearLayout>
 ```
 
-```
 </details>
 
 <details>
