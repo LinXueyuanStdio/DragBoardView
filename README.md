@@ -324,7 +324,7 @@ for each item in the column, it should implement `DragItem` interface.
 public class Item implements DragItem {
     private final String itemName;
     private int colIndex;
-    private int itemIndex
+    private int itemIndex;
 
     public Item(String itemName, int colIndex, int itemIndex) {
         this.itemName = itemName;
