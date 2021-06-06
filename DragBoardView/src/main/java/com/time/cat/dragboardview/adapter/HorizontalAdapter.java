@@ -1,8 +1,8 @@
 package com.time.cat.dragboardview.adapter;
 
 import android.content.Context;
-import android.support.annotation.IntRange;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.IntRange;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +44,11 @@ public abstract class HorizontalAdapter<VH extends HorizontalAdapter.ViewHolder>
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         if (needFooter() && viewType == TYPE_FOOTER) {
             View convertView = LayoutInflater.from(mContext)
-                    .inflate(getFooterLayoutRes(), parent, false);
+                                             .inflate(getFooterLayoutRes(), parent, false);
             return onCreateViewHolder(convertView, TYPE_FOOTER);
         }
         View convertView = LayoutInflater.from(mContext)
-                .inflate(getContentLayoutRes(), parent, false);
+                                         .inflate(getContentLayoutRes(), parent, false);
         return onCreateViewHolder(convertView, TYPE_CONTENT);
     }
 
@@ -98,7 +98,7 @@ public abstract class HorizontalAdapter<VH extends HorizontalAdapter.ViewHolder>
     @Override
     public void onDrop(int page, int position, DragColumn tag) {
         mHideDragItem = false;
-//        notifyItemChanged(position);
+        //        notifyItemChanged(position);
         notifyDataSetChanged();
     }
 

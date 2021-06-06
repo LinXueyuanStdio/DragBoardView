@@ -70,7 +70,7 @@
                 android:background="@color/transparent"
                 android:text="取消"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/add_ok"
                 android:layout_width="72dp"
                 android:layout_height="32dp"

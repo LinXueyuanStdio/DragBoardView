@@ -1,6 +1,6 @@
 package com.time.cat.dragboardview.model;
 
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 
 import java.util.List;
 

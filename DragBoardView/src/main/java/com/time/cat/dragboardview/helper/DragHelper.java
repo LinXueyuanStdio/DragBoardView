@@ -4,9 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -22,7 +23,6 @@ import com.time.cat.dragboardview.callback.DragHorizontalViewHolder;
 import com.time.cat.dragboardview.callback.DragVerticalAdapter;
 import com.time.cat.dragboardview.model.DragColumn;
 import com.time.cat.dragboardview.model.DragItem;
-import com.time.cat.dragboardview.utils.AttrAboutPhone;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -68,7 +68,7 @@ public class DragHelper {
     private int downScrollBounce;// 拖动的时候，开始向下滚动的边界
     private int mPosition = -1;// 拖动的 View 在纵向 recyclerView 上的 position
     private int mPagerPosition = -1;// 拖动的 View 在横向 recyclerView 上的 position
-
+    private int screenWidth = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     public DragHelper(Context activity) {
@@ -83,6 +83,10 @@ public class DragHelper {
         mWindowParams.gravity = Gravity.TOP | Gravity.LEFT;
         mWindowParams.x = 0;
         mWindowParams.y = 0;
+
+        DisplayMetrics dm = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(dm);
+        screenWidth = dm.widthPixels;
 
         mDragImageView = new ImageView(activity);
         mDragImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -378,8 +382,7 @@ public class DragHelper {
      * @param rowY 相对屏幕的纵坐标
      */
     public void updateDraggingPosition(float rowX, float rowY) {
-        if (mWindowManager == null || mWindowParams == null)
-            return;
+        if (mWindowManager == null || mWindowParams == null) { return; }
         if (!confirmOffset) {
             calculateOffset(rowX, rowY);
         }
@@ -429,7 +432,8 @@ public class DragHelper {
      */
     private void getTargetHorizontalRecyclerViewScrollBoundaries() {
         leftScrollBounce = 200;
-        rightScrollBounce = AttrAboutPhone.screenWidth - 200;
+
+        rightScrollBounce = screenWidth - 200;
         Log.i("MyTag", "leftScrollBounce " + leftScrollBounce + " rightScrollBounce " + rightScrollBounce);
     }
 
@@ -439,8 +443,7 @@ public class DragHelper {
      * @param x 拖动点横坐标
      */
     private void recyclerViewScrollHorizontal(final int x, final int y) {
-        if (mHorizontalScrollTimerTask != null)
-            mHorizontalScrollTimerTask.cancel();
+        if (mHorizontalScrollTimerTask != null) { mHorizontalScrollTimerTask.cancel(); }
 
         if (x > rightScrollBounce) {
             mHorizontalScrollTimerTask = new TimerTask() {
@@ -479,8 +482,7 @@ public class DragHelper {
      * @param y 拖动点纵坐标
      */
     private void recyclerViewScrollVertical(final int x, final int y) {
-        if (mVerticalScrollTimerTask != null)
-            mVerticalScrollTimerTask.cancel();
+        if (mVerticalScrollTimerTask != null) { mVerticalScrollTimerTask.cancel(); }
         if (y > downScrollBounce) {
             mVerticalScrollTimerTask = new TimerTask() {
                 @Override

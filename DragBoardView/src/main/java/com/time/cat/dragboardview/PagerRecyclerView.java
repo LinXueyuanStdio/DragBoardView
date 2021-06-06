@@ -5,10 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -238,8 +238,8 @@ public class PagerRecyclerView extends RecyclerView {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             mPositionOnTouchDown = getLayoutManager().canScrollHorizontally() ?
-                    RecyclerviewUtils.getCenterXChildPosition(this)
-                    : RecyclerviewUtils.getCenterYChildPosition(this);
+                                   RecyclerviewUtils.getCenterXChildPosition(this)
+                                                                              : RecyclerviewUtils.getCenterYChildPosition(this);
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -264,7 +264,7 @@ public class PagerRecyclerView extends RecyclerView {
         if (state == SCROLL_STATE_DRAGGING) {
             mNeedAdjust = true;
             mCurView = getLayoutManager().canScrollHorizontally() ? RecyclerviewUtils.getCenterXChild(this) :
-                    RecyclerviewUtils.getCenterYChild(this);
+                       RecyclerviewUtils.getCenterYChild(this);
             if (mCurView != null) {
                 if (mHasCalledOnPageChanged) {
                     // While rvp is scrolling, mPositionBeforeScroll will be previous value.
@@ -292,7 +292,7 @@ public class PagerRecyclerView extends RecyclerView {
         } else if (state == SCROLL_STATE_IDLE) {
             if (mNeedAdjust) {
                 int targetPosition = getLayoutManager().canScrollHorizontally() ? RecyclerviewUtils.getCenterXChildPosition(this) :
-                        RecyclerviewUtils.getCenterYChildPosition(this);
+                                     RecyclerviewUtils.getCenterYChildPosition(this);
                 if (mCurView != null) {
                     targetPosition = getChildAdapterPosition(mCurView);
                     if (getLayoutManager().canScrollHorizontally()) {
@@ -337,8 +337,8 @@ public class PagerRecyclerView extends RecyclerView {
     @NonNull
     protected RecyclerViewPagerAdapter ensureRecyclerViewPagerAdapter(Adapter adapter) {
         return (adapter instanceof RecyclerViewPagerAdapter)
-                ? (RecyclerViewPagerAdapter) adapter
-                : new RecyclerViewPagerAdapter(this, adapter);
+               ? (RecyclerViewPagerAdapter) adapter
+               : new RecyclerViewPagerAdapter(this, adapter);
     }
 
 
@@ -390,11 +390,11 @@ public class PagerRecyclerView extends RecyclerView {
     }
 
 
-    /***
+    /**
      * adjust position before Touch event complete and fling action start.
      */
     private void adjustPositionX(int velocityX) {
-        if (reverseLayout) velocityX *= -1;
+        if (reverseLayout) { velocityX *= -1; }
 
         int childCount = getChildCount();
         if (childCount > 0) {
@@ -415,11 +415,9 @@ public class PagerRecyclerView extends RecyclerView {
                 View centerXChild = RecyclerviewUtils.getCenterXChild(this);
                 if (centerXChild != null) {
                     if (mTouchSpan > centerXChild.getWidth() * mTriggerOffset * mTriggerOffset && targetPosition != 0) {
-                        if (!reverseLayout) targetPosition--;
-                        else targetPosition++;
+                        if (!reverseLayout) { targetPosition--; } else { targetPosition++; }
                     } else if (mTouchSpan < centerXChild.getWidth() * -mTriggerOffset && targetPosition != mViewPagerAdapter.getItemCount() - 1) {
-                        if (!reverseLayout) targetPosition++;
-                        else targetPosition--;
+                        if (!reverseLayout) { targetPosition++; } else { targetPosition--; }
                     }
                 }
             }
@@ -431,7 +429,7 @@ public class PagerRecyclerView extends RecyclerView {
      * adjust position before Touch event complete and fling action start.
      */
     protected void adjustPositionY(int velocityY) {
-        if (reverseLayout) velocityY *= -1;
+        if (reverseLayout) { velocityY *= -1; }
 
         int childCount = getChildCount();
         if (childCount > 0) {
@@ -453,11 +451,9 @@ public class PagerRecyclerView extends RecyclerView {
                 View centerYChild = RecyclerviewUtils.getCenterYChild(this);
                 if (centerYChild != null) {
                     if (mTouchSpan > centerYChild.getHeight() * mTriggerOffset && targetPosition != 0) {
-                        if (!reverseLayout) targetPosition--;
-                        else targetPosition++;
+                        if (!reverseLayout) { targetPosition--; } else { targetPosition++; }
                     } else if (mTouchSpan < centerYChild.getHeight() * -mTriggerOffset && targetPosition != mViewPagerAdapter.getItemCount() - 1) {
-                        if (!reverseLayout) targetPosition++;
-                        else targetPosition--;
+                        if (!reverseLayout) { targetPosition++; } else { targetPosition--; }
                     }
                 }
             }

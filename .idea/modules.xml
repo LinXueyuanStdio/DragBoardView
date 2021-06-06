@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DragBoardView.iml" filepath="$PROJECT_DIR$/DragBoardView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/DragBoardView/DragBoardView-DragBoardView.iml" filepath="$PROJECT_DIR$/DragBoardView/DragBoardView-DragBoardView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragBoardView.iml" filepath="$PROJECT_DIR$/.idea/modules/DragBoardView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragBoardView/DragBoardView.DragBoardView.iml" filepath="$PROJECT_DIR$/.idea/modules/DragBoardView/DragBoardView.DragBoardView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DragBoardView.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DragBoardView.app.iml" />
     </modules>
   </component>
 </project>
